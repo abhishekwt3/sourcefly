@@ -110,7 +110,7 @@ export default function RecommendationsDetail({ supplierId, supplierName, onClos
     ? "Sign in to write a review"
     : canReview
     ? (data.mine ? "Edit your review" : "Write a review")
-    : null;
+    : "Write a review";
 
   const onCtaClick = () => {
     if (!data.viewer) {
@@ -159,18 +159,21 @@ export default function RecommendationsDetail({ supplierId, supplierName, onClos
         ))}
       </div>
 
-      {ctaLabel && (
-        <button
-          onClick={onCtaClick}
-          className="w-full py-3 rounded-xl font-semibold text-[14.5px] flex items-center justify-center gap-2 mb-2"
-          style={{ background: COLORS.amber, color: "#0C0B09" }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" />
-          </svg>
-          {ctaLabel}
-        </button>
-      )}
+      <button
+        onClick={onCtaClick}
+        disabled={data.viewer && !canReview}
+        className="w-full py-3 rounded-xl font-semibold text-[14.5px] flex items-center justify-center gap-2 mb-2"
+        style={{
+          background: data.viewer && !canReview ? "rgba(26,23,20,0.06)" : COLORS.amber,
+          color: data.viewer && !canReview ? D.muted : "#0C0B09",
+          cursor: data.viewer && !canReview ? "not-allowed" : "pointer",
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" />
+        </svg>
+        {ctaLabel}
+      </button>
       <p className="text-xs mb-5 text-center" style={{ color: D.muted }}>
         Only buyers with a Kendra-verified order can post a review.
       </p>
