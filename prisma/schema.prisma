@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ListingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Role {
+  BUYER
+  SELLER
+}
+
+enum RecommendationCriterion {
+  DELIVERY_TIME
+  RESPONSE_TIME
+  FLEXIBILITY
+  QUALITY_OF_WORK
+  PRICING_VALUE
+  COMMUNICATION
+  SAMPLE_QUALITY
+  FOLLOWED_THROUGH
+}
+
+model User {
+  id          String   @id @default(cuid())
+  phone       String   @unique
+  firebaseUid String   @unique
+  role        Role?
+  name        String?
+  email       String?
+  brand       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  supplier             Supplier?
+  recommendationsGiven Recommendation[] @relation("BuyerRecommendations")
+}
+
+model Supplier {
+  id              String        @id @default(cuid())
+  legacyId        Int?          @unique
+  ownerId         String?       @unique
+  owner           User?         @relation(fields: [ownerId], references: [id])
+  name            String
+  handle          String        @unique
+  tagline         String
+  category        String
+  location        String
+  moq             Int
+  lowMoq          Boolean       @default(false)
+  lead            String
+  about           String
+  whatsapp        String
+  accent          String        @default("#D4A853")
+  yearsInBusiness Int?
+  ordersShipped   Int?
+  videoUrl        String?
+  videoThumbnail  String?
+  videoDuration   String?
+  tags            String[]      @default([])
+  certifications  String[]      @default([])
+  photos          String[]      @default([])
+  recommendCount  Int           @default(0)
+  status          ListingStatus @default(PENDING)
+  submittedBy     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  offerings       Offering[]
+  recommendations Recommendation[]
+
+  @@index([status])
+  @@index([category])
+}
+
+model Offering {
+  id         String   @id @default(cuid())
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  name       String
+  moq        String
+  lead       String
+  price      String?
+  image      String?
+  position   Int      @default(0)
+
+  @@index([supplierId])
+}
+
+model Recommendation {
+  id         String                    @id @default(cuid())
+  supplierId String
+  supplier   Supplier                  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  buyerId    String
+  buyer      User                      @relation("BuyerRecommendations", fields: [buyerId], references: [id], onDelete: Cascade)
+  criteria   RecommendationCriterion[]
+  note       String?
+  createdAt  DateTime                  @default(now())
+  updatedAt  DateTime                  @updatedAt
+
+  @@unique([supplierId, buyerId])
+  @@index([supplierId])
+  @@index([buyerId])
+}
+
+model BuyerRequirement {
+  id          String   @id @default(cuid())
+  name        String
+  brand       String?
+  category    String?
+  description String
+  moq         String?
+  timeline    String?
+  email       String?
+  createdAt   DateTime @default(now())
+}
