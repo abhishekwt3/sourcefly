@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+.env
+.env*.local
+.DS_Store
+/prisma/migrations/
+
+# Workflow artifacts (Claude/superpowers skill outputs)
+.superpowers/
+docs/superpowers/
+.claude/

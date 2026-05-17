@@ -13,6 +13,9 @@ const D = {
   ink: "#1A1714",
   ink2: "#3A342D",
   muted: "#75695B",
+  brand: "#8B6A3A",
+  brandDeep: "#6B4F24",
+  brandTint: "#F3EAD9",
   olive: "#4F6B3A",
   oliveTint: "#E6EDD9",
   line: "rgba(26,23,20,0.08)",
@@ -45,13 +48,19 @@ function LocationIcon() {
 function Stat({ value, label, borderRight }) {
   return (
     <div
-      className="flex flex-col items-center justify-center py-3.5 px-2 flex-1"
+      className="flex flex-col items-center justify-center py-2.5 px-2 flex-1"
       style={{ borderRight: borderRight ? `1px solid ${D.line2}` : "none" }}
     >
-      <p className="font-semibold leading-tight" style={{ color: D.ink, fontSize: 22 }}>
+      <p
+        className="serif font-semibold leading-tight"
+        style={{ color: D.ink, fontSize: 17, letterSpacing: "-0.2px" }}
+      >
         {value}
       </p>
-      <p className="text-[10px] mt-0.5" style={{ color: D.muted }}>
+      <p
+        className="mono text-[9px] mt-0.5 uppercase"
+        style={{ color: D.muted, letterSpacing: "1px" }}
+      >
         {label}
       </p>
     </div>
@@ -61,11 +70,11 @@ function Stat({ value, label, borderRight }) {
 function CertChip({ label }) {
   return (
     <span
-      className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium"
+      className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full font-medium"
       style={{ background: D.oliveTint, color: D.olive }}
     >
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
-        <path d="M5 12l4 4 10-10" stroke={D.olive} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <svg width="8" height="8" viewBox="0 0 24 24" fill="none">
+        <path d="M5 12l4 4 10-10" stroke={D.olive} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       {label}
     </span>
@@ -75,7 +84,10 @@ function CertChip({ label }) {
 function SectionLabel({ children, action }) {
   return (
     <div className="flex items-center justify-between mb-2.5">
-      <span className="text-[11px] font-medium" style={{ color: D.muted }}>
+      <span
+        className="mono text-[11px] font-medium uppercase"
+        style={{ color: D.muted, letterSpacing: "1.4px" }}
+      >
         {children}
       </span>
       {action}
@@ -90,6 +102,24 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
   const [summary, setSummary] = useState({ count: s.recommendCount ?? 0, topCriteria: [] });
   const [photoTab, setPhotoTab] = useState("products");
   const valid = Boolean(form.name && form.need);
+
+  const handleShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const shareData = {
+      title: s.name,
+      text: `Check out ${s.name} on Kendra`,
+      url,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+      }
+    } catch {
+      /* user cancelled or unsupported */
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -145,31 +175,63 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
           </svg>
           Back
         </button>
-        <button
-          onClick={() => onSave(s.id)}
-          className="w-9 h-9 rounded-xl flex items-center justify-center"
-          style={{ background: D.card }}
-          aria-label={saved ? "Remove bookmark" : "Save supplier"}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? COLORS.amber : "none"} stroke={saved ? COLORS.amber : D.muted} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 4h12v17l-6-4-6 4z" />
-          </svg>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleShare}
+            className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{ background: D.card }}
+            aria-label="Share supplier"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={D.muted} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+          </button>
+          <button
+            onClick={() => onSave(s.id)}
+            className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{ background: D.card }}
+            aria-label={saved ? "Remove bookmark" : "Save supplier"}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? COLORS.amber : "none"} stroke={saved ? COLORS.amber : D.muted} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 4h12v17l-6-4-6 4z" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div className="px-4 py-4 space-y-3 pb-10">
-        {/* Hero identity card */}
-        <div className="p-4 rounded-2xl" style={{ background: D.card }}>
+        {/* Hero identity — uses app background, no card */}
+        <div className="px-1 pt-1">
           <div className="flex items-start gap-3 mb-3">
             <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center font-semibold flex-shrink-0"
-              style={{ background: s.accent, color: COLORS.onAccent, fontSize: 23 }}
+              className="w-16 h-16 flex items-center justify-center font-semibold flex-shrink-0 overflow-hidden"
+              style={{
+                background: s.accent,
+                color: COLORS.onAccent,
+                fontSize: 23,
+                borderRadius: 18,
+                boxShadow: `inset 0 1px 0 0 rgba(255,255,255,0.15), 0 0 0 4px ${s.accent}30`,
+              }}
             >
-              {s.name.slice(0, 2).toUpperCase()}
+              {s.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={s.logoUrl}
+                  alt={s.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                s.name.slice(0, 2).toUpperCase()
+              )}
             </div>
             <div className="flex-1 min-w-0 pt-0.5">
               <h1 className="flex items-center gap-1.5 flex-wrap">
-                <span className="font-semibold leading-tight" style={{ color: D.ink, fontSize: 26 }}>
+                <span
+                  className="serif font-semibold leading-tight"
+                  style={{ color: D.ink, fontSize: 26, letterSpacing: "-0.4px" }}
+                >
                   {s.name}
                 </span>
                 <VerifiedBadge />
@@ -197,20 +259,6 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
             {s.about}
           </p>
 
-          {s.tags?.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {s.tags.map((t) => (
-                <span
-                  key={t}
-                  className="text-xs px-2.5 py-1 rounded-full"
-                  style={{ background: D.cream, color: D.ink2, border: `1px solid ${D.line2}` }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          )}
-
           {/* CTA buttons */}
           <div className="flex gap-2">
             <button
@@ -227,7 +275,7 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
             <button
               onClick={() => window.open(`https://wa.me/${s.wa}`, "_blank", "noopener,noreferrer")}
               className="w-[50px] h-[50px] rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: D.cream, border: `1px solid ${D.line2}` }}
+              style={{ background: D.card, border: `1px solid ${D.line2}` }}
               aria-label="Chat on WhatsApp"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={D.ink} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -238,28 +286,40 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
         </div>
 
         {/* Stats + Certifications */}
-        {(stats.length > 0 || s.certifications?.length > 0) && (
-          <div className="rounded-2xl overflow-hidden" style={{ background: D.card }}>
-            {stats.length > 0 && (
-              <div
-                className="flex"
-                style={{ borderBottom: s.certifications?.length > 0 ? `1px solid ${D.line}` : "none" }}
-              >
-                {stats.map((st, i) => (
-                  <Stat key={st.label} value={st.value} label={st.label} borderRight={i < stats.length - 1} />
-                ))}
-              </div>
-            )}
-            {s.certifications?.length > 0 && (
-              <div className="px-4 py-3 flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-semibold" style={{ color: D.muted }}>Certified</span>
-                {s.certifications.map((c) => (
-                  <CertChip key={c} label={c} />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        {(() => {
+          const cleanCerts = Array.from(
+            new Set((s.certifications ?? []).filter(Boolean).map((c) => c.trim()).filter(Boolean))
+          );
+          const hasCerts = cleanCerts.length > 0;
+          if (stats.length === 0 && !hasCerts) return null;
+          return (
+            <div className="rounded-2xl overflow-hidden mt-4" style={{ background: D.card }}>
+              {stats.length > 0 && (
+                <div
+                  className="flex"
+                  style={{ borderBottom: hasCerts ? `1px solid ${D.line}` : "none" }}
+                >
+                  {stats.map((st, i) => (
+                    <Stat key={st.label} value={st.value} label={st.label} borderRight={i < stats.length - 1} />
+                  ))}
+                </div>
+              )}
+              {hasCerts && (
+                <div className="px-2.5 py-1.5 flex items-center gap-1 flex-wrap">
+                  <span
+                    className="mono text-[8px] uppercase"
+                    style={{ color: D.muted, letterSpacing: "0.8px" }}
+                  >
+                    Certified
+                  </span>
+                  {cleanCerts.map((c) => (
+                    <CertChip key={c} label={c} />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Recommendation chip */}
         <RecommendChip
@@ -274,30 +334,36 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
             <SectionLabel
               action={
                 s.offerings.length > 3 && (
-                  <span className="text-xs font-medium" style={{ color: COLORS.amber }}>
-                    View all {s.offerings.length} →
+                  <span
+                    className="text-[12px] font-semibold inline-flex items-center gap-1"
+                    style={{ color: D.brandDeep }}
+                  >
+                    View all {s.offerings.length}
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M13 5l7 7-7 7" />
+                    </svg>
                   </span>
                 )
               }
             >
               Catalog
             </SectionLabel>
-            <div className="rounded-2xl overflow-hidden" style={{ background: D.card }}>
-              {s.offerings.map((o, i) => (
+            <div className="space-y-1.5">
+              {s.offerings.map((o) => (
                 <div
                   key={o.name}
-                  className="px-4 py-3 flex items-center gap-3"
-                  style={{ borderTop: i === 0 ? "none" : `1px solid ${D.line}` }}
+                  className="rounded-2xl px-3 py-2.5 flex items-center gap-3"
+                  style={{ background: D.card }}
                 >
                   <div
-                    className="w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden"
+                    className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden"
                     style={{ background: D.cream }}
                   >
                     {o.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={o.image} alt={o.name} className="w-full h-full object-cover" />
                     ) : (
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={D.muted} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={D.muted} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
                         <rect x="3" y="3" width="18" height="18" rx="3" />
                         <circle cx="8.5" cy="8.5" r="1.5" />
                         <path d="m21 15-5-5L5 21" />
@@ -305,14 +371,28 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[15px] font-semibold leading-snug" style={{ color: D.ink }}>{o.name}</p>
-                    <p className="text-[12.5px] mt-0.5" style={{ color: D.muted }}>{o.lead}</p>
+                    <p
+                      className="text-[15px] font-semibold leading-snug"
+                      style={{ color: D.ink, letterSpacing: "-0.1px" }}
+                    >
+                      {o.name}
+                    </p>
+                    <p className="text-[12.5px] mt-1" style={{ color: D.muted }}>
+                      {o.pack || o.lead}
+                    </p>
                   </div>
                   <div className="text-right flex-shrink-0">
                     {o.price && (
-                      <p className="text-xs font-semibold" style={{ color: D.ink }}>{o.price}</p>
+                      <p className="mono text-[12px] font-semibold" style={{ color: D.ink }}>
+                        {o.price}
+                      </p>
                     )}
-                    <p className="text-[10.5px] mt-0.5" style={{ color: D.muted }}>MOQ {o.moq}</p>
+                    <p
+                      className="mono text-[10.5px] mt-1.5"
+                      style={{ color: D.muted, letterSpacing: "0.6px" }}
+                    >
+                      MOQ {o.moq}
+                    </p>
                   </div>
                 </div>
               ))}

@@ -54,6 +54,9 @@ model Supplier {
   tagline         String
   category        String
   location        String
+  city            String?
+  country         String?       @default("India")
+  logoUrl         String?
   moq             Int
   lowMoq          Boolean       @default(false)
   lead            String
@@ -67,7 +70,9 @@ model Supplier {
   videoDuration   String?
   tags            String[]      @default([])
   certifications  String[]      @default([])
+  certPdfs        String[]      @default([])
   photos          String[]      @default([])
+  facilityPhotos  String[]      @default([])
   recommendCount  Int           @default(0)
   status          ListingStatus @default(PENDING)
   submittedBy     String?
@@ -82,15 +87,20 @@ model Supplier {
 }
 
 model Offering {
-  id         String   @id @default(cuid())
-  supplierId String
-  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
-  name       String
-  moq        String
-  lead       String
-  price      String?
-  image      String?
-  position   Int      @default(0)
+  id             String   @id @default(cuid())
+  supplierId     String
+  supplier       Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  name           String
+  pack           String?
+  moq            String
+  lead           String
+  price          String?
+  priceMin       Int?
+  priceMax       Int?
+  priceOnEnquiry Boolean  @default(false)
+  tag            String?
+  image          String?
+  position       Int      @default(0)
 
   @@index([supplierId])
 }

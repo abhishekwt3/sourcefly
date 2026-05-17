@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kendra-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kendra
+      POSTGRES_PASSWORD: kendra
+      POSTGRES_DB: kendra
+    ports:
+      - "5432:5432"
+    volumes:
+      - kendra_pg:/var/lib/postgresql/data
+
+volumes:
+  kendra_pg:

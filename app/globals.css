@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Refined-5 design tokens */
+  --bg: #f6f3ec;
+  --cream: #f6f3ec;
+  --cream-2: #efeadd;
+  --card: #ffffff;
+  --ink: #1a1714;
+  --ink-2: #3a342d;
+  --muted: #75695b;
+  --brand: #8b6a3a;
+  --brand-deep: #6b4f24;
+  --brand-tint: #f3ead9;
+  --olive: #4f6b3a;
+  --olive-tint: #e6edd9;
+  --orange: #c4622d;
+  --plum: #6b3a4f;
+  --gold: #c9a55a;
+  --line: rgba(26, 23, 20, 0.08);
+  --line-2: rgba(26, 23, 20, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Display serif — supplier names, stat values, rating numbers */
+.serif,
+.pf {
+  font-family: var(--font-serif), "Source Serif Pro", Georgia, serif;
+}
+
+/* Monospaced labels — uppercase tracked text (section headers, stat labels) */
+.mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #b5b5b0 !important;
+}
+
+select option {
+  background: #ffffff;
+  color: var(--ink);
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
