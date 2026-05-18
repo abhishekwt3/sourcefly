@@ -4,6 +4,28 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { COLORS } from "@/lib/theme";
 
+function Field({ label, value, onChange, ph, type = "text" }) {
+  return (
+    <div>
+      <label className="text-xs font-medium block mb-1" style={{ color: COLORS.text2 }}>
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={ph}
+        className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+        style={{
+          background: COLORS.surface,
+          border: `1px solid ${COLORS.border}`,
+          color: COLORS.text,
+        }}
+      />
+    </div>
+  );
+}
+
 export default function BuyerOnboarding({ initial }) {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -38,26 +60,6 @@ export default function BuyerOnboarding({ initial }) {
     }
   };
 
-  const Field = ({ label, k, ph, type = "text" }) => (
-    <div>
-      <label className="text-xs font-medium block mb-1" style={{ color: COLORS.text2 }}>
-        {label}
-      </label>
-      <input
-        type={type}
-        value={form[k]}
-        onChange={set(k)}
-        placeholder={ph}
-        className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
-        style={{
-          background: COLORS.surface,
-          border: `1px solid ${COLORS.border}`,
-          color: COLORS.text,
-        }}
-      />
-    </div>
-  );
-
   return (
     <div className="px-5 pt-14 pb-8">
       <h1 className="pf text-2xl font-bold mb-2" style={{ color: COLORS.text }}>
@@ -68,9 +70,9 @@ export default function BuyerOnboarding({ initial }) {
       </p>
 
       <div className="space-y-4">
-        <Field label="Your name *" k="name" ph="Rajni Ohri" />
-        <Field label="Brand (optional)" k="brand" ph="Ohria Ayurveda" />
-        <Field label="Email (optional)" k="email" ph="you@brand.com" type="email" />
+        <Field label="Your name *" value={form.name} onChange={set("name")} ph="Rajni Ohri" />
+        <Field label="Brand (optional)" value={form.brand} onChange={set("brand")} ph="Ohria Ayurveda" />
+        <Field label="Email (optional)" value={form.email} onChange={set("email")} ph="you@brand.com" type="email" />
       </div>
 
       {error && (
