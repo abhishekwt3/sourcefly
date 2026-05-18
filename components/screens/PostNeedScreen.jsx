@@ -13,23 +13,72 @@ const FIELDS = [
   { k: "timeline", label: "Timeline", ph: "e.g. Need in 3 weeks" },
 ];
 
-export default function PostNeedScreen() {
+export default function PostNeedScreen({ onBack }) {
   const [form, setForm] = useState(INITIAL);
   const [posted, setPosted] = useState(false);
-  const valid = Boolean(form.name && form.need);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const valid = Boolean(form.name && form.need) && !submitting;
 
   const setField = (k) => (e) => setForm((prev) => ({ ...prev, [k]: e.target.value }));
 
+  const submit = async () => {
+    if (!valid) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/requirements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "Could not post requirement");
+      setPosted(true);
+    } catch (e) {
+      setError(e?.message || "Could not post requirement");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col h-full overflow-y-auto px-4 py-4 space-y-4">
-      <div>
-        <p className="font-semibold text-lg pf" style={{ color: COLORS.text }}>
-          Post a Requirement
-        </p>
-        <p className="text-xs mt-1" style={{ color: COLORS.muted }}>
-          Verified suppliers will reach out to you on WhatsApp.
-        </p>
+    <div className="flex flex-col h-full overflow-y-auto" style={{ background: COLORS.bg }}>
+      <div
+        className="sticky top-0 z-10 flex items-center justify-between px-4 py-3"
+        style={{ background: COLORS.bg, borderBottom: `1px solid ${COLORS.border}` }}
+      >
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1 text-sm font-medium px-2 py-1 -ml-2 rounded-lg"
+          style={{ color: COLORS.text }}
+          aria-label="Back"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+          Back
+        </button>
       </div>
+
+      <div className="px-4 py-4 space-y-4 pb-8">
+        <div>
+          <p className="font-semibold text-lg pf" style={{ color: COLORS.text }}>
+            Post a Requirement
+          </p>
+          <p className="text-xs mt-1" style={{ color: COLORS.muted }}>
+            Verified suppliers will reach out to you on WhatsApp.
+          </p>
+        </div>
 
       {posted ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center py-16">
@@ -121,8 +170,13 @@ export default function PostNeedScreen() {
               onChange={setField("need")}
             />
           </div>
+          {error && (
+            <p className="text-xs" style={{ color: "#C0392B" }}>
+              {error}
+            </p>
+          )}
           <button
-            onClick={() => setPosted(true)}
+            onClick={submit}
             disabled={!valid}
             className="w-full py-3.5 rounded-2xl font-semibold text-sm transition-all"
             style={{
@@ -131,13 +185,14 @@ export default function PostNeedScreen() {
               cursor: valid ? "pointer" : "not-allowed",
             }}
           >
-            Post Requirement
+            {submitting ? "Posting…" : "Post Requirement"}
           </button>
           <p className="text-xs text-center pb-4" style={{ color: COLORS.border2 }}>
             Only D2C-verified suppliers will see this
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }

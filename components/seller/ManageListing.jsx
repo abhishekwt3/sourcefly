@@ -708,18 +708,19 @@ function ProfileTab({ form, setField }) {
               placeholder="5"
             />
           </Field>
-          <Field label="Lead">
+          <Field label="Lead time (days)">
             <input
               className={inputBase}
               style={inputStyle}
+              inputMode="numeric"
               value={form.lead}
-              onChange={(e) => setField("lead")(e.target.value)}
-              placeholder="12d"
+              onChange={(e) => setField("lead")(e.target.value.replace(/\D/g, ""))}
+              placeholder="12"
             />
           </Field>
         </div>
         <p className="mono text-[10px] mt-3" style={{ color: D.muted, letterSpacing: "0.4px" }}>
-          In business · Min order · Typical lead
+          In business · Min order · Typical lead time
         </p>
 
         <label

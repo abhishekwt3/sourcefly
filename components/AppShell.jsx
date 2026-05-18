@@ -8,11 +8,13 @@ import DiscoverScreen from "@/components/screens/DiscoverScreen";
 import SavedScreen from "@/components/screens/SavedScreen";
 import ProfileScreen from "@/components/screens/ProfileScreen";
 import ListScreen from "@/components/screens/ListScreen";
+import PostNeedScreen from "@/components/screens/PostNeedScreen";
 
 export default function AppShell({ suppliers }) {
   const [tab, setTab] = useState("discover");
   const [selectedId, setSelectedId] = useState(null);
   const [listMode, setListMode] = useState(false);
+  const [postNeedMode, setPostNeedMode] = useState(false);
   const [savedIds, setSavedIds] = useState([]);
 
   const toggleSave = useCallback((id) => {
@@ -29,6 +31,7 @@ export default function AppShell({ suppliers }) {
   const switchTab = (id) => {
     setSelectedId(null);
     setListMode(false);
+    setPostNeedMode(false);
     setTab(id);
   };
 
@@ -71,6 +74,8 @@ export default function AppShell({ suppliers }) {
           />
         ) : listMode ? (
           <ListScreen onBack={() => setListMode(false)} />
+        ) : postNeedMode ? (
+          <PostNeedScreen onBack={() => setPostNeedMode(false)} />
         ) : (
           <>
             {tab === "discover" && (
@@ -93,6 +98,7 @@ export default function AppShell({ suppliers }) {
               <ProfileScreen
                 savedCount={savedIds.length}
                 onListBusiness={() => setListMode(true)}
+                onPostNeed={() => setPostNeedMode(true)}
               />
             )}
           </>

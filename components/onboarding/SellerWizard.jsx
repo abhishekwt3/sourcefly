@@ -279,13 +279,14 @@ export default function SellerWizard({ step, totalSteps, user, supplier }) {
               placeholder="100"
             />
           </Field>
-          <Field label="Lead time *">
+          <Field label="Lead time (days) *">
             <input
               className={baseInputClass}
               style={inputStyle}
+              inputMode="numeric"
               value={form.lead}
-              onChange={(e) => setField("lead")(e.target.value)}
-              placeholder="7–10 days"
+              onChange={(e) => setField("lead")(e.target.value.replace(/\D/g, ""))}
+              placeholder="e.g. 10"
             />
           </Field>
           <label className="flex items-center gap-2 text-sm" style={{ color: COLORS.text2 }}>
@@ -360,11 +361,12 @@ export default function SellerWizard({ step, totalSteps, user, supplier }) {
                   <input
                     className={baseInputClass}
                     style={inputStyle}
-                    placeholder="Lead (e.g. 12 days)"
+                    inputMode="numeric"
+                    placeholder="Lead time in days"
                     value={o.lead}
                     onChange={(e) => {
                       const next = [...form.offerings];
-                      next[i] = { ...next[i], lead: e.target.value };
+                      next[i] = { ...next[i], lead: e.target.value.replace(/\D/g, "") };
                       setField("offerings")(next);
                     }}
                   />

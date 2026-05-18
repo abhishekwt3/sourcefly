@@ -220,7 +220,7 @@ export default function SupplierCard({ supplier: s, onClick, onSave, saved }) {
       >
         <div className="flex gap-5">
           {s.moq != null && <StatBlock label="MOQ" value={s.moq} />}
-          {s.lead && <StatBlock label="Lead" value={s.lead} />}
+          {s.lead && <StatBlock label="Lead time" value={/days?$/i.test(String(s.lead).trim()) ? s.lead : `${s.lead} days`} />}
           {fromPrice && <StatBlock label="From" value={fromPrice} />}
         </div>
 

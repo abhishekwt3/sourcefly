@@ -205,7 +205,23 @@ export default function AdminSupplierList({ suppliers, filter, tally }) {
         </button>
       </div>
 
-      {/* Tabs */}
+      {/* Top-level nav */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+        <button
+          onClick={() => router.push("/admin/suppliers")}
+          style={{ padding: "7px 16px", borderRadius: 999, fontSize: 13, fontWeight: 600, border: "none", cursor: "pointer", background: "#B8893A", color: "#fff" }}
+        >
+          Suppliers
+        </button>
+        <button
+          onClick={() => router.push("/admin/requirements")}
+          style={{ padding: "7px 16px", borderRadius: 999, fontSize: 13, fontWeight: 600, border: "none", cursor: "pointer", background: "#E8E8E4", color: "#555" }}
+        >
+          Requirements
+        </button>
+      </div>
+
+      {/* Status tabs */}
       <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
         {tabs.map((t) => (
           <button

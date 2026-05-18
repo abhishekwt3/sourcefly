@@ -60,7 +60,7 @@ function Row({ label, hint, onClick }) {
   );
 }
 
-export default function ProfileScreen({ savedCount = 0, onListBusiness }) {
+export default function ProfileScreen({ savedCount = 0, onListBusiness, onPostNeed }) {
   const router = useRouter();
   const [me, setMe] = useState(null);
 
@@ -89,14 +89,14 @@ export default function ProfileScreen({ savedCount = 0, onListBusiness }) {
             className="w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-lg"
             style={{ background: COLORS.amber, color: COLORS.onAccent }}
           >
-            {(me.name || me.phone || "?").slice(0, 1).toUpperCase()}
+            {(me.name || me.email || me.phone || "?").slice(0, 1).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm" style={{ color: COLORS.text }}>
               {me.name || "Add your name"}
             </p>
             <p className="text-xs" style={{ color: COLORS.muted }}>
-              {me.role === "SELLER" ? "Seller" : "Buyer"} · {me.phone}
+              {me.role === "SELLER" ? "Seller" : "Buyer"} · {me.phone || me.email}
             </p>
           </div>
           <button
@@ -128,7 +128,7 @@ export default function ProfileScreen({ savedCount = 0, onListBusiness }) {
         <Stat value={0} label="Requirements" />
       </div>
 
-      {/* Seller CTA */}
+      {/* Role-specific CTA */}
       {me?.role === "SELLER" && me?.supplierStatus ? (
         <button
           type="button"
@@ -152,6 +152,29 @@ export default function ProfileScreen({ savedCount = 0, onListBusiness }) {
           </div>
           <Chevron color={COLORS.muted} />
         </button>
+      ) : me?.role === "BUYER" ? (
+        <button
+          type="button"
+          onClick={() => onPostNeed?.()}
+          className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"
+          style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}` }}
+        >
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+            style={{ background: `${COLORS.amber}1F` }}
+          >
+            📝
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold" style={{ color: COLORS.text }}>
+              Post a requirement
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: COLORS.muted }}>
+              Verified D2C suppliers reach out on WhatsApp.
+            </p>
+          </div>
+          <Chevron color={COLORS.muted} />
+        </button>
       ) : (
         <button
           type="button"
@@ -161,7 +184,6 @@ export default function ProfileScreen({ savedCount = 0, onListBusiness }) {
               return;
             }
             if (me.role === "SELLER") router.push("/seller/manage");
-            else if (me.role === "BUYER") onListBusiness?.();
             else router.push("/onboarding/role");
           }}
           className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"

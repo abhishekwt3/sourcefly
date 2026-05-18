@@ -153,7 +153,7 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
 
   const stats = [
     s.yearsInBusiness != null && { value: `${s.yearsInBusiness}y`, label: "In business" },
-    s.lead && { value: s.lead, label: "Lead time" },
+    s.lead && { value: /days?$/i.test(String(s.lead).trim()) ? s.lead : `${s.lead} days`, label: "Lead time" },
     s.moq && { value: String(s.moq), label: "Min order" },
   ].filter(Boolean);
 
@@ -378,7 +378,7 @@ export default function SupplierPDP({ supplier: s, onBack, onSave, saved }) {
                       {o.name}
                     </p>
                     <p className="text-[12.5px] mt-1" style={{ color: D.muted }}>
-                      {o.pack || o.lead}
+                      {o.pack || (o.lead && (/days?$/i.test(String(o.lead).trim()) ? o.lead : `${o.lead} days`))}
                     </p>
                   </div>
                   <div className="text-right flex-shrink-0">
